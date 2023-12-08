@@ -1,0 +1,34 @@
+# this workflow will run npm-groovy-lint on supported files
+# in an active pull request
+# Supported files extensions: *.groovy, *.gradle, *.jenkinsfile
+
+# Note: groovy lint RC file must be placed in root repo folder under file name '.groovylintrc.json'
+name: "Groovy Linter"
+
+on:
+  workflow_call:
+
+jobs:
+  groovy-lint-changed-files:
+    name: "groovy lint files"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: "set up java v8-14"
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: "install groovy linter"
+        run: |
+          npm install -g npm-groovy-lint
+      - name: "Run groovy linter"
+        run: |
+          git --no-pager diff --name-only --diff-filter=ACMRT ${{github.event.pull_request.base.sha}} ${{github.event.pull_request.head.sha}} -- '**.py'
+          filesOriginal="$(git --no-pager diff --name-only --diff-filter=ACMRT ${{github.event.pull_request.base.sha}} ${{github.event.pull_request.head.sha}} -- '**.py')"
+          modified=$(filesOriginal//$'\n'/",**/")
+          finalPath="**/$modified"
+          echo "$finalPath"
+          npm-groovy-lint --noserver=true --failon warning --files "$finalPaths"
