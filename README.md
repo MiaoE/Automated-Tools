@@ -1,6 +1,6 @@
 # Automated-Tools
 ## Description
-This repository contains tools that can possibly be used in other projects and applications. These tools may include linters.
+This repository contains CI/CD tools that can possibly be used in other projects and applications. 
 
 ---
 
